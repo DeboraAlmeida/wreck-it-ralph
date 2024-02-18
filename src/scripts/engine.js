@@ -3,14 +3,17 @@ const state = {
     squares: document.querySelectorAll(".square"),
     enemy: document.querySelector(".enemy"),
     timeLeft: document.querySelector("#time-left"),
-    score: document.querySelector("#score")
+    score: document.querySelector("#score"),
+    modal: document.querySelector(".modal"),
+    close: document.querySelector(".close"),
+    message: document.querySelector(".modal-message")
   },
   values: {
     timeId: null,
     gameVelocity: 1000,
     hitPosition: 0,
     result: 0,
-    currentTime: 60
+    currentTime: 8
   },
   actions: {
     countDownTimerId: setInterval(countDown, 1000)
@@ -21,6 +24,7 @@ const state = {
 const randomSquare = () => {
   state.view.squares.forEach((square) => {
     square.classList.remove("enemy")
+    square.style.backgroundColor = '#d8cec1'
   })
   
   let randomNumber = Math.floor(Math.random()*9)
@@ -44,6 +48,7 @@ const addListenerHitbox = () => {
     square.addEventListener('click', () => {
       if (square.id === state.values.hitPosition) {
         state.values.result++
+        square.style.backgroundColor = '#000'
         state.view.score.textContent = state.values.result
         state.values.hitPosition = null
         playSound()
@@ -58,7 +63,8 @@ function countDown() {
   if (state.values.currentTime <= 0) {
     clearInterval(state.actions.countDownTimerId)
     clearInterval(state.values.timeId)
-    alert(`Game over! Your score is ${state.values.result}`)
+    state.view.message.textContent = `Game over! Your score is ${state.values.result}`
+    state.view.modal.style.display = "block"
   }
 }
 
@@ -66,6 +72,16 @@ function countDown() {
 const init = () => {
   moveEnemy()
   addListenerHitbox()
+}
+
+state.view.close.onclick = function() {
+  state.view.modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == state.view.modal) {
+    state.view.modal.style.display = "none";
+  }
 }
 
 init()
